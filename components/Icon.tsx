@@ -9,12 +9,12 @@ import {
   Shield,
   User,
   Menu,
-  CheckCircle,
-  XCircle,
-  Play,
-  Square,
+  Check,
   X,
-  LucideIcon
+  Square,
+  Play,
+  FileText,
+  Download
 } from 'lucide-react';
 
 const icons = {
@@ -26,12 +26,13 @@ const icons = {
   shield: Shield,
   user: User,
   menu: Menu,
-  checkCircle: CheckCircle,
-  xCircle: XCircle,
-  play: Play,
-  square: Square,
+  check: Check,
   x: X,
-} as const;
+  square: Square,
+  play: Play,
+  fileText: FileText,
+  download: Download
+};
 
 interface IconProps {
   name: keyof typeof icons;
@@ -40,12 +41,12 @@ interface IconProps {
 }
 
 export function Icon({ name, className = '', size = 24 }: IconProps) {
-  const IconComponent = icons[name] as LucideIcon;
+  const IconComponent = icons[name];
   
   if (!IconComponent) {
     console.warn(`Icon "${name}" not found`);
     return null;
   }
-
+  
   return <IconComponent className={className} size={size} />;
 }

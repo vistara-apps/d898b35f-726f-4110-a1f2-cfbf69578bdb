@@ -8,25 +8,42 @@ interface ModalProps {
   onClose: () => void;
   title?: string;
   children: ReactNode;
+  variant?: 'default';
 }
 
-export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, variant = 'default' }: ModalProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-
+    
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
@@ -34,14 +51,14 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
       />
       
       {/* Modal */}
-      <div className="relative bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 rounded-lg shadow-modal max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="relative glass-card p-6 w-full max-w-md mx-auto shadow-modal">
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between p-6 border-b border-white border-opacity-20">
+          <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-white">{title}</h2>
             <button
               onClick={onClose}
-              className="p-2 rounded-full bg-white bg-opacity-10 hover:bg-opacity-20 transition-all duration-200"
+              className="p-1 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-200"
             >
               <X className="w-5 h-5 text-white" />
             </button>
@@ -49,7 +66,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         )}
         
         {/* Content */}
-        <div className="p-6">
+        <div className="text-white">
           {children}
         </div>
       </div>

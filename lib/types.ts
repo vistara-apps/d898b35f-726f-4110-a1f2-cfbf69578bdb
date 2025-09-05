@@ -29,21 +29,23 @@ export interface RightsCard {
     keyRights: string[];
   };
   script: {
-    [language: string]: string[];
+    phrases: string[];
+    responses: string[];
   };
   language: string;
 }
 
 export interface RecordingState {
   isRecording: boolean;
-  recordingType: 'audio' | 'video';
-  startTime?: Date;
-  mediaStream?: MediaStream;
+  recordingType: 'audio' | 'video' | null;
+  startTime: Date | null;
+  mediaRecorder: MediaRecorder | null;
+  stream: MediaStream | null;
 }
 
 export interface AIGeneratedCard {
-  title: string;
   summary: string;
   keyPoints: string[];
   shareableText: string;
+  timestamp: Date;
 }

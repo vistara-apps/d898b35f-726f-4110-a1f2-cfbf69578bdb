@@ -11,40 +11,35 @@ export function formatDuration(seconds: number): string {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
-export function generateRecordingId(): string {
-  return `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+export function generateId(): string {
+  return crypto.randomUUID();
 }
 
-export function generateCardId(): string {
-  return `card_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+export function formatTimestamp(date: Date): string {
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
 }
 
-export async function generateAISummary(
-  interactionType: string,
-  duration: number,
-  location?: string
-): Promise<string> {
-  try {
-    const response = await fetch('/api/generate-summary', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        interactionType,
-        duration,
-        location,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to generate summary');
+export function getLocationString(): Promise<string> {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) {
+      resolve('Location unavailable');
+      return;
     }
 
-    const data = await response.json();
-    return data.summary;
-  } catch (error) {
-    console.error('Error generating AI summary:', error);
-    return `${interactionType.replace('_', ' ')} interaction recorded for ${formatDuration(duration)}`;
-  }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        resolve(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+      },
+      () => {
+        resolve('Location unavailable');
+      }
+    );
+  });
 }

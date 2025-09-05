@@ -1,314 +1,261 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useMiniKit } from '@coinbase/onchainkit/minikit';
 import { AppShell } from '@/components/AppShell';
 import { RightsCard } from '@/components/RightsCard';
 import { RecordButton } from '@/components/RecordButton';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/Button';
-import { Share2, FileText, Globe } from 'lucide-react';
-import { SAMPLE_RIGHTS_CARDS, INTERACTION_TYPES, US_STATES } from '@/lib/constants';
-import { RightsCard as RightsCardType, AIGeneratedCard } from '@/lib/types';
-import { generateAISummary } from '@/lib/utils';
+import { Share2, FileText, Info } from 'lucide-react';
+import { DEFAULT_RIGHTS_CARDS } from '@/lib/constants';
+import { generateRightsSummary, generateShareableCard } from '@/lib/ai';
+import { formatTimestamp, getLocationString, generateId } from '@/lib/utils';
+import { InteractionRecording, AIGeneratedCard } from '@/lib/types';
+import { useMiniKit } from '@coinbase/onchainkit/minikit';
 
 export default function HomePage() {
-  const { setFrameReady } = useMiniKit();
-  const [selectedCard, setSelectedCard] = useState<RightsCardType | null>(null);
-  const [showCardModal, setShowCardModal] = useState(false);
+  const [showRightsModal, setShowRightsModal] = useState(false);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
-  const [showLanguageModal, setShowLanguageModal] = useState(false);
-  const [generatedCard, setGeneratedCard] = useState<AIGeneratedCard | null>(null);
-  const [selectedState, setSelectedState] = useState('CA');
-  const [selectedInteraction, setSelectedInteraction] = useState('traffic_stop');
-  const [language, setLanguage] = useState('en');
+  const [recordings, setRecordings] = useState<InteractionRecording[]>([]);
+  const [aiCard, setAiCard] = useState<AIGeneratedCard | null>(null);
+  const [isGeneratingCard, setIsGeneratingCard] = useState(false);
+  
+  const { setFrameReady } = useMiniKit();
 
   useEffect(() => {
     setFrameReady();
   }, [setFrameReady]);
 
-  const handleRecordingComplete = async (recordingData: {
-    id: string;
-    duration: number;
-    type: 'audio' | 'video';
-    blob: Blob;
-  }) => {
+  const handleRecordingComplete = async (blob: Blob, duration: number, type: 'audio' | 'video') => {
     try {
+      // Create a local URL for the recording
+      const url = URL.createObjectURL(blob);
+      const location = await getLocationString();
+      
+      const recording: InteractionRecording = {
+        recordingId: generateId(),
+        userId: 'current-user', // In a real app, this would come from auth
+        timestamp: new Date(),
+        duration,
+        filePath: url,
+        interactionType: 'traffic_stop', // Default, could be selected by user
+        location,
+        createdAt: new Date()
+      };
+
       // Generate AI summary
-      const summary = await generateAISummary(
-        selectedInteraction,
-        recordingData.duration
+      const summary = await generateRightsSummary(
+        recording.interactionType,
+        duration,
+        location
       );
-
-      // Generate shareable card
-      const response = await fetch('/api/generate-card', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          interactionType: selectedInteraction,
-          state: selectedState,
-          context: `Recording completed: ${recordingData.type} for ${Math.floor(recordingData.duration / 60)}:${(recordingData.duration % 60).toString().padStart(2, '0')}`
-        }),
-      });
-
-      if (response.ok) {
-        const cardData = await response.json();
-        setGeneratedCard({
-          ...cardData,
-          summary: summary
-        });
-        setShowSummaryModal(true);
-      }
+      
+      recording.aiSummary = summary;
+      
+      // Add to recordings list
+      setRecordings(prev => [recording, ...prev]);
+      
+      // Show success message
+      alert(`${type === 'video' ? 'Video' : 'Audio'} recording saved successfully!`);
+      
     } catch (error) {
-      console.error('Error processing recording:', error);
+      console.error('Error saving recording:', error);
+      alert('Error saving recording. Please try again.');
     }
   };
 
-  const handleShareCard = async (card: RightsCardType) => {
+  const handleShareRights = async () => {
+    setIsGeneratingCard(true);
     try {
-      const response = await fetch('/api/generate-card', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          interactionType: card.interactionType,
-          state: card.state,
-          context: card.title
-        }),
-      });
-
-      if (response.ok) {
-        const cardData = await response.json();
-        setGeneratedCard(cardData);
-        setShowSummaryModal(true);
-      }
+      const card = DEFAULT_RIGHTS_CARDS.traffic_stop;
+      const shareableText = await generateShareableCard(
+        'traffic_stop',
+        'Know your rights during police interactions',
+        card.content.keyRights
+      );
+      
+      const generatedCard: AIGeneratedCard = {
+        summary: shareableText,
+        keyPoints: card.content.keyRights,
+        shareableText,
+        timestamp: new Date()
+      };
+      
+      setAiCard(generatedCard);
+      setShowSummaryModal(true);
     } catch (error) {
       console.error('Error generating shareable card:', error);
+      alert('Error generating shareable card. Please try again.');
+    } finally {
+      setIsGeneratingCard(false);
     }
   };
 
-  const shareToSocial = (text: string) => {
-    if (navigator.share) {
-      navigator.share({
-        title: 'RightsCard - Know Your Rights',
-        text: text,
-        url: window.location.href,
-      });
-    } else {
-      navigator.clipboard.writeText(text);
-      alert('Content copied to clipboard!');
+  const handleShareCard = () => {
+    if (aiCard) {
+      if (navigator.share) {
+        navigator.share({
+          title: 'RightsCard - Know Your Rights',
+          text: aiCard.shareableText,
+          url: window.location.href
+        });
+      } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(aiCard.shareableText);
+        alert('Card content copied to clipboard!');
+      }
     }
   };
-
-  const currentCard = SAMPLE_RIGHTS_CARDS.find(
-    card => card.state === selectedState && card.interactionType === selectedInteraction
-  ) || SAMPLE_RIGHTS_CARDS[0];
 
   return (
     <AppShell>
-      <div className="max-w-lg mx-auto px-4 py-8">
+      <div className="space-y-8">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">
+        <section className="text-center space-y-6 py-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
             State and our<br />
-            Rights Card
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Rights Card
+            </span>
           </h1>
-          <p className="text-white text-opacity-80 text-lg leading-relaxed">
+          
+          <p className="text-white text-opacity-80 max-w-md mx-auto leading-relaxed">
             Access state-specific legal rights for your interactions. 
-            Know what to do and what to say when you need it most.
+            Know what to do and what not to do in critical moments that might affect your world.
           </p>
-        </div>
+        </section>
 
-        {/* State and Interaction Selectors */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div>
-            <label className="block text-white text-sm font-medium mb-2">State</label>
-            <select
-              value={selectedState}
-              onChange={(e) => setSelectedState(e.target.value)}
-              className="w-full bg-white bg-opacity-20 backdrop-blur-sm border border-white border-opacity-30 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {US_STATES.map(state => (
-                <option key={state} value={state} className="bg-gray-800 text-white">
-                  {state}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-white text-sm font-medium mb-2">Interaction</label>
-            <select
-              value={selectedInteraction}
-              onChange={(e) => setSelectedInteraction(e.target.value)}
-              className="w-full bg-white bg-opacity-20 backdrop-blur-sm border border-white border-opacity-30 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value={INTERACTION_TYPES.TRAFFIC_STOP} className="bg-gray-800 text-white">
-                Traffic Stop
-              </option>
-              <option value={INTERACTION_TYPES.QUESTIONING} className="bg-gray-800 text-white">
-                Questioning
-              </option>
-              <option value={INTERACTION_TYPES.HOME_SEARCH} className="bg-gray-800 text-white">
-                Home Search
-              </option>
-              <option value={INTERACTION_TYPES.OTHER} className="bg-gray-800 text-white">
-                Other
-              </option>
-            </select>
-          </div>
-        </div>
-
-        {/* Rights Card */}
-        <div className="mb-8">
-          <RightsCard 
-            card={currentCard} 
-            variant="interactive"
-            onShare={handleShareCard}
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div className="space-y-4 mb-8">
-          <div className="flex justify-center">
-            <RecordButton 
-              variant="primary"
-              onRecordingComplete={handleRecordingComplete}
-            />
-          </div>
-          
-          <div className="flex justify-center space-x-4">
+        {/* Main Action Buttons */}
+        <section className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
-              variant="secondary"
-              onClick={() => setShowSummaryModal(true)}
+              onClick={() => setShowRightsModal(true)}
               className="flex items-center space-x-2"
             >
-              <Share2 className="w-4 h-4" />
-              <span>Shareable Summary</span>
+              <FileText className="w-5 h-5" />
+              <span>View Rights Card</span>
             </Button>
             
             <Button
               variant="secondary"
-              onClick={() => setShowLanguageModal(true)}
+              onClick={handleShareRights}
+              disabled={isGeneratingCard}
               className="flex items-center space-x-2"
             >
-              <Globe className="w-4 h-4" />
-              <span>Language</span>
+              <Share2 className="w-5 h-5" />
+              <span>{isGeneratingCard ? 'Generating...' : 'Share Summary'}</span>
             </Button>
           </div>
-        </div>
+        </section>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            onClick={() => {
-              setSelectedCard(currentCard);
-              setShowCardModal(true);
-            }}
-            className="glass-card p-4 text-center hover:bg-opacity-15 transition-all duration-200"
-          >
-            <FileText className="w-6 h-6 text-white mx-auto mb-2" />
-            <span className="text-white text-sm font-medium">View Full Card</span>
-          </button>
+        {/* Recording Section */}
+        <section className="space-y-6">
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold text-white mb-2">Record Interaction</h2>
+            <p className="text-white text-opacity-70 text-sm">
+              Document your interaction for your safety and legal protection
+            </p>
+          </div>
           
-          <button
-            onClick={() => handleShareCard(currentCard)}
-            className="glass-card p-4 text-center hover:bg-opacity-15 transition-all duration-200"
-          >
-            <Share2 className="w-6 h-6 text-white mx-auto mb-2" />
-            <span className="text-white text-sm font-medium">Share Rights</span>
-          </button>
-        </div>
+          <RecordButton onRecordingComplete={handleRecordingComplete} />
+        </section>
+
+        {/* Recent Recordings */}
+        {recordings.length > 0 && (
+          <section className="space-y-4">
+            <h3 className="text-xl font-semibold text-white">Recent Recordings</h3>
+            <div className="space-y-3">
+              {recordings.slice(0, 3).map((recording) => (
+                <div key={recording.recordingId} className="glass-card p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-white font-medium capitalize">
+                        {recording.interactionType.replace('_', ' ')}
+                      </p>
+                      <p className="text-white text-opacity-70 text-sm">
+                        {formatTimestamp(recording.timestamp)} • {Math.floor(recording.duration / 60)}m {recording.duration % 60}s
+                      </p>
+                    </div>
+                    <Button size="sm" variant="secondary">
+                      View
+                    </Button>
+                  </div>
+                  {recording.aiSummary && (
+                    <p className="text-white text-opacity-80 text-sm mt-2 line-clamp-2">
+                      {recording.aiSummary}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Footer Info */}
+        <section className="text-center py-8">
+          <p className="text-white text-opacity-60 text-xs max-w-sm mx-auto">
+            RightsCard provides general legal information and should not replace professional legal advice. 
+            Always consult with a qualified attorney for specific legal matters.
+          </p>
+        </section>
       </div>
 
-      {/* Modals */}
+      {/* Rights Card Modal */}
       <Modal
-        isOpen={showCardModal}
-        onClose={() => setShowCardModal(false)}
+        isOpen={showRightsModal}
+        onClose={() => setShowRightsModal(false)}
         title="State Legal Rights"
       >
-        {selectedCard && (
-          <RightsCard card={selectedCard} variant="static" />
-        )}
+        <RightsCard
+          card={{
+            cardId: 'traffic-stop-default',
+            state: 'General',
+            interactionType: 'traffic_stop',
+            language: 'en',
+            ...DEFAULT_RIGHTS_CARDS.traffic_stop
+          }}
+          variant="interactive"
+          onShare={handleShareRights}
+        />
       </Modal>
 
+      {/* AI Summary Modal */}
       <Modal
         isOpen={showSummaryModal}
         onClose={() => setShowSummaryModal(false)}
-        title="Summary"
+        title="Shareable Summary"
       >
-        {generatedCard && (
+        {aiCard && (
           <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                {generatedCard.title}
-              </h3>
-              <p className="text-white text-opacity-80 text-sm">
-                {generatedCard.summary}
+            <div className="glass-card p-4 bg-white bg-opacity-5">
+              <p className="text-white text-sm leading-relaxed">
+                {aiCard.summary}
               </p>
             </div>
             
-            <div>
-              <h4 className="text-white font-medium mb-2">Key Points:</h4>
+            <div className="space-y-2">
+              <h4 className="text-white font-medium">Key Points:</h4>
               <ul className="space-y-1">
-                {generatedCard.keyPoints.map((point, index) => (
-                  <li key={index} className="text-white text-opacity-80 text-sm">
-                    • {point}
+                {aiCard.keyPoints.map((point, index) => (
+                  <li key={index} className="text-white text-opacity-80 text-sm flex items-start space-x-2">
+                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 flex-shrink-0" />
+                    <span>{point}</span>
                   </li>
                 ))}
               </ul>
             </div>
             
-            <div className="pt-4 border-t border-white border-opacity-20">
-              <Button
-                onClick={() => shareToSocial(generatedCard.shareableText)}
-                className="w-full flex items-center justify-center space-x-2"
-              >
-                <Share2 className="w-4 h-4" />
-                <span>Share Summary</span>
+            <div className="flex space-x-3">
+              <Button onClick={handleShareCard} className="flex-1">
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </Button>
+              <Button variant="secondary" onClick={() => setShowSummaryModal(false)}>
+                Close
               </Button>
             </div>
           </div>
         )}
-      </Modal>
-
-      <Modal
-        isOpen={showLanguageModal}
-        onClose={() => setShowLanguageModal(false)}
-        title="Select Language"
-      >
-        <div className="space-y-3">
-          <button
-            onClick={() => {
-              setLanguage('en');
-              setShowLanguageModal(false);
-            }}
-            className={`w-full p-3 rounded-lg text-left transition-all duration-200 ${
-              language === 'en'
-                ? 'bg-blue-500 bg-opacity-30 text-white'
-                : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'
-            }`}
-          >
-            English
-          </button>
-          
-          <button
-            onClick={() => {
-              setLanguage('es');
-              setShowLanguageModal(false);
-            }}
-            className={`w-full p-3 rounded-lg text-left transition-all duration-200 ${
-              language === 'es'
-                ? 'bg-blue-500 bg-opacity-30 text-white'
-                : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'
-            }`}
-          >
-            Español
-          </button>
-        </div>
       </Modal>
     </AppShell>
   );

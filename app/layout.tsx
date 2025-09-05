@@ -7,8 +7,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'RightsCard - Your Pocket Legal Defense',
-  description: 'Quick access to your rights and record interactions during police stops',
-  keywords: 'legal rights, police interactions, recording, civil rights',
+  description: 'Access your rights and record interactions during police stops with immediate legal awareness and documentation.',
+  keywords: 'legal rights, police interactions, recording, documentation, civil rights',
   authors: [{ name: 'RightsCard Team' }],
   viewport: 'width=device-width, initial-scale=1',
 };

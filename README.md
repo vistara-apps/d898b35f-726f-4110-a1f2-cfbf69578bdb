@@ -1,130 +1,111 @@
 # RightsCard - Your Pocket Legal Defense
 
-A mobile-first Base Mini App that provides immediate access to legal rights and recording capabilities during police interactions.
+A Next.js Base Mini App that provides immediate access to legal rights and recording capabilities during police interactions.
 
 ## Features
 
 ### 🛡️ On-Demand Rights Guides
-- State-specific legal rights information
+- State-specific legal rights and guidelines
 - Easy-to-read mobile-optimized cards
-- Do's and Don'ts for common interactions
-- Multilingual support (English/Spanish)
+- Do's and don'ts for common interactions
+- Helpful phrases and scripts
 
 ### 🎥 Real-Time Incident Recorder
 - One-tap audio/video recording
-- Timestamped recordings
-- Secure local storage
+- Timestamped recordings with location data
+- Local storage with cloud backup options
 - AI-generated summaries
 
-### 🌐 Multilingual Scripting & Guides
+### 🌐 Multilingual Support
 - Pre-written scripts in multiple languages
-- Clear communication templates
-- High-stress situation guidance
+- Clear communication guides
+- Accessibility across language barriers
 
-### 🤖 Auto-Generated Shareable Cards (AI)
-- AI-powered interaction summaries
-- Shareable legal rights cards
-- Social media friendly formats
-- Quick sharing to trusted contacts
+### 🤖 AI-Generated Shareable Cards
+- Auto-generated summaries of rights and interactions
+- Shareable content for social media
+- Quick communication to support networks
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 with App Router
 - **Blockchain**: Base (via OnchainKit & MiniKit)
 - **Styling**: Tailwind CSS with custom design system
-- **AI**: OpenAI/OpenRouter integration
+- **AI**: OpenAI API (via OpenRouter)
 - **Recording**: Web MediaRecorder API
-- **TypeScript**: Full type safety
+- **Storage**: Local storage with IPFS integration (Pinata)
 
 ## Getting Started
 
-1. **Clone and install dependencies**:
-```bash
-git clone <repository-url>
-cd rightscard-base-miniapp
-npm install
-```
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
 2. **Set up environment variables**:
-```bash
-cp .env.example .env.local
-```
-
-Fill in your API keys:
-- `OPENROUTER_API_KEY` or `OPENAI_API_KEY` for AI features
-- `NEXT_PUBLIC_ONCHAINKIT_API_KEY` for Base integration
+   Copy `.env.local` and add your API keys:
+   ```bash
+   NEXT_PUBLIC_ONCHAINKIT_API_KEY=your_onchainkit_key
+   NEXT_PUBLIC_OPENAI_API_KEY=your_openai_key
+   ```
 
 3. **Run the development server**:
-```bash
-npm run dev
-```
+   ```bash
+   npm run dev
+   ```
 
-4. **Open [http://localhost:3000](http://localhost:3000)** in your browser
+4. **Open your browser**:
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-## Project Structure
-
-```
-├── app/
-│   ├── api/                 # API routes for AI features
-│   ├── globals.css         # Global styles and design system
-│   ├── layout.tsx          # Root layout with providers
-│   ├── page.tsx            # Main application page
-│   └── providers.tsx       # MiniKit and OnchainKit providers
-├── components/
-│   ├── AppShell.tsx        # Main app layout and navigation
-│   ├── RightsCard.tsx      # Interactive rights information cards
-│   ├── RecordButton.tsx    # Recording functionality component
-│   ├── Modal.tsx           # Reusable modal component
-│   ├── Button.tsx          # Styled button component
-│   └── Icon.tsx            # Icon component wrapper
-├── lib/
-│   ├── types.ts            # TypeScript type definitions
-│   ├── constants.ts        # App constants and sample data
-│   └── utils.ts            # Utility functions
-```
-
-## Key Components
-
-### RightsCard
-Interactive cards displaying state-specific legal rights with tabbed navigation for Do's, Don'ts, and Scripts.
-
-### RecordButton
-One-tap recording functionality with audio/video options, duration tracking, and automatic AI summary generation.
+## Core Components
 
 ### AppShell
-Main application layout with floating background animations and responsive navigation.
+Main layout component with navigation and floating background elements.
 
-## Design System
+### RightsCard
+Interactive component displaying legal rights with tabbed interface for do's/don'ts and legal rights.
 
-The app uses a custom design system with:
-- **Colors**: Purple/blue gradient theme with glass morphism effects
-- **Typography**: Clean, readable fonts optimized for mobile
-- **Spacing**: Consistent 8px grid system
-- **Animations**: Smooth transitions and floating background elements
-- **Mobile-first**: Responsive design optimized for mobile devices
+### RecordButton
+Recording interface supporting both audio and video capture with real-time duration tracking.
+
+### Modal
+Reusable modal component for displaying rights cards and AI-generated summaries.
 
 ## API Integration
 
-### AI Features
-- **OpenAI/OpenRouter**: Generates summaries and shareable cards
-- **Model**: google/gemini-2.0-flash-001 for optimal performance
+### OpenAI (via OpenRouter)
+- Generates AI summaries of interactions
+- Creates shareable social media content
+- Uses `google/gemini-2.0-flash-001` model
 
-### Base Integration
-- **MiniKitProvider**: Handles wallet connections and Base chain integration
-- **OnchainKit**: Identity and wallet components
+### OnchainKit & MiniKit
+- Base blockchain integration
+- Wallet connectivity
+- Frame-ready for Farcaster
+
+### Future Integrations
+- **Supabase**: Backend as a Service for user data
+- **Pinata**: IPFS storage for recordings
+- **Neynar**: Farcaster social features
+
+## Design System
+
+### Colors
+- Primary: `hsl(217.9, 82.9%, 36.5%)`
+- Accent: `hsl(217.9, 82.9%, 56.5%)`
+- Success: `hsl(158.4, 44.7%, 43.7%)`
+- Error: `hsl(0, 72.3%, 50%)`
+
+### Components
+- Glass morphism cards with backdrop blur
+- Gradient buttons with hover effects
+- Mobile-first responsive design
+- Smooth animations and transitions
 
 ## Legal Disclaimer
 
-RightsCard is a community resource and educational tool. It does not constitute legal advice. Always consult with a qualified attorney for specific legal situations.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+RightsCard provides general legal information and should not replace professional legal advice. Always consult with a qualified attorney for specific legal matters.
 
 ## License
 
-MIT License - see LICENSE file for details.
+This project is licensed under the MIT License.

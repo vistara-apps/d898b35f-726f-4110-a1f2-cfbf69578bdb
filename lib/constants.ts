@@ -2,12 +2,12 @@ export const INTERACTION_TYPES = {
   TRAFFIC_STOP: 'traffic_stop',
   QUESTIONING: 'questioning',
   HOME_SEARCH: 'home_search',
-  OTHER: 'other',
+  OTHER: 'other'
 } as const;
 
 export const LANGUAGES = {
   EN: 'en',
-  ES: 'es',
+  ES: 'es'
 } as const;
 
 export const US_STATES = [
@@ -18,46 +18,41 @@ export const US_STATES = [
   'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
 ];
 
-export const SAMPLE_RIGHTS_CARDS = [
-  {
-    cardId: '1',
-    state: 'CA',
-    interactionType: 'traffic_stop',
+export const DEFAULT_RIGHTS_CARDS = {
+  traffic_stop: {
     title: 'Traffic Stop Rights',
     content: {
       dos: [
         'Keep your hands visible',
-        'Provide license, registration, and insurance when asked',
         'Remain calm and polite',
-        'Ask if you are free to leave'
+        'Provide license, registration, and insurance when asked',
+        'You can remain silent beyond basic identification'
       ],
       donts: [
-        'Don\'t reach for anything without permission',
+        'Don\'t reach for anything without announcing it',
         'Don\'t argue or resist',
-        'Don\'t consent to searches',
-        'Don\'t answer questions beyond identification'
+        'Don\'t consent to searches without a warrant',
+        'Don\'t lie or provide false information'
       ],
       keyRights: [
-        'You have the right to remain silent',
-        'You can refuse consent to search your vehicle',
-        'You can ask if you are being detained',
-        'You have the right to record the interaction'
+        'Right to remain silent',
+        'Right to refuse consent to search',
+        'Right to ask if you\'re free to leave',
+        'Right to record the interaction'
       ]
     },
     script: {
-      en: [
+      phrases: [
+        'I am exercising my right to remain silent',
+        'I do not consent to any searches',
         'Am I free to leave?',
-        'I do not consent to any searches.',
-        'I am exercising my right to remain silent.',
-        'I would like to speak to a lawyer.'
+        'I would like to speak to an attorney'
       ],
-      es: [
-        '¿Soy libre de irme?',
-        'No consiento a ningún registro.',
-        'Estoy ejerciendo mi derecho a permanecer en silencio.',
-        'Me gustaría hablar con un abogado.'
+      responses: [
+        'I understand, officer',
+        'I am complying with your lawful orders',
+        'I am recording this interaction for my safety'
       ]
-    },
-    language: 'en'
+    }
   }
-];
+};

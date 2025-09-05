@@ -1,0 +1,30 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "frame": {
+    "version": "1",
+    "name": "RightsCard",
+    "subtitle": "Built with Zara",
+    "description": "RightsCard is a Base Mini App built with Zara.",
+    "iconUrl": "https://0co.to/images/zara-2.png",
+    "homeUrl": "https://d898b35f726f4110a1f2cfbf69578bdb-6vt5.vercel.app",
+    "splashImageUrl": "https://d898b35f726f4110a1f2cfbf69578bdb-6vt5.vercel.app/splash.png",
+    "splashBackgroundColor": "#000000",
+    "heroImageUrl": "https://d898b35f726f4110a1f2cfbf69578bdb-6vt5.vercel.app/image.png",
+    "tagline": "RightsCard",
+    "screenshotUrls": [
+      "https://d898b35f726f4110a1f2cfbf69578bdb-6vt5.vercel.app/screenshot.png",
+      "https://d898b35f726f4110a1f2cfbf69578bdb-6vt5.vercel.app/screenshot.png"
+    ],
+    "primaryCategory": "social",
+    "tags": [
+      "base",
+      "miniapp",
+      "onchainkit"
+    ],
+    "webhookUrl": "https://d898b35f726f4110a1f2cfbf69578bdb-6vt5.vercel.app/api/webhook"
+  }
+}
