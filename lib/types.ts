@@ -16,6 +16,8 @@ export interface InteractionRecording {
   location?: string;
   aiSummary?: string;
   createdAt: Date;
+  ipfsHash?: string;
+  isUploaded?: boolean;
 }
 
 export interface RightsCard {
@@ -27,10 +29,13 @@ export interface RightsCard {
     dos: string[];
     donts: string[];
     keyRights: string[];
+    emergencyContacts?: string[];
+    legalResources?: string[];
   };
   script: {
     phrases: string[];
     responses: string[];
+    emergencyPhrases?: string[];
   };
   language: string;
 }
@@ -41,6 +46,7 @@ export interface RecordingState {
   startTime: Date | null;
   mediaRecorder: MediaRecorder | null;
   stream: MediaStream | null;
+  duration: number;
 }
 
 export interface AIGeneratedCard {
@@ -48,4 +54,49 @@ export interface AIGeneratedCard {
   keyPoints: string[];
   shareableText: string;
   timestamp: Date;
+  interactionType?: string;
+  state?: string;
+}
+
+export interface AppState {
+  user: User | null;
+  recordings: InteractionRecording[];
+  selectedState: string;
+  selectedLanguage: string;
+  isOnline: boolean;
+}
+
+export interface NotificationSettings {
+  enablePushNotifications: boolean;
+  enableLocationAlerts: boolean;
+  enableRecordingReminders: boolean;
+}
+
+export interface EmergencyContact {
+  id: string;
+  name: string;
+  phone: string;
+  relationship: string;
+  isLawyer: boolean;
+}
+
+export interface LegalResource {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  type: 'article' | 'video' | 'contact' | 'organization';
+  state?: string;
+}
+
+export interface ShareableCardData {
+  id: string;
+  title: string;
+  content: string;
+  keyPoints: string[];
+  timestamp: Date;
+  interactionType: string;
+  state: string;
+  language: string;
+  ipfsHash?: string;
 }
