@@ -1,111 +1,307 @@
 # RightsCard - Your Pocket Legal Defense
 
-A Next.js Base Mini App that provides immediate access to legal rights and recording capabilities during police interactions.
+A production-ready, mobile-first Base Mini App that provides immediate access to legal rights and recording capabilities during police interactions. Built with Next.js 15, TypeScript, and integrated with Base blockchain.
 
-## Features
+## 🚀 Features
 
-### 🛡️ On-Demand Rights Guides
-- State-specific legal rights and guidelines
-- Easy-to-read mobile-optimized cards
-- Do's and don'ts for common interactions
-- Helpful phrases and scripts
+### Core Functionality
+- **📋 On-Demand Rights Guides**: State-specific legal rights and 'dos and don'ts' for common interactions
+- **🎥 Real-Time Incident Recorder**: Quick audio/video recording with secure local storage
+- **🌍 Multilingual Support**: Full internationalization in English and Spanish
+- **🤖 AI-Generated Summaries**: Automatic summarization of interactions and rights using OpenAI/OpenRouter
+- **📤 Shareable Cards**: Easy sharing of rights information via social platforms and clipboard
 
-### 🎥 Real-Time Incident Recorder
-- One-tap audio/video recording
-- Timestamped recordings with location data
-- Local storage with cloud backup options
-- AI-generated summaries
+### Advanced Features
+- **🏛️ State-Specific Variations**: Customized rights information for different US states
+- **💾 Persistent Storage**: Client-side data persistence with Zustand
+- **🎨 Modern UI/UX**: Glass morphism design with smooth animations
+- **📱 Mobile-First**: Optimized for mobile devices with responsive design
+- **🔗 Base Integration**: Built as a Base Mini App with OnchainKit
+- **🔒 Privacy-Focused**: Local storage with optional cloud sync
 
-### 🌐 Multilingual Support
-- Pre-written scripts in multiple languages
-- Clear communication guides
-- Accessibility across language barriers
+## 🛠️ Tech Stack
 
-### 🤖 AI-Generated Shareable Cards
-- Auto-generated summaries of rights and interactions
-- Shareable content for social media
-- Quick communication to support networks
+### Frontend
+- **Next.js 15** - React framework with App Router
+- **React 18** - UI library with hooks and context
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first styling with custom design system
+- **Framer Motion** - Smooth animations and transitions
 
-## Tech Stack
+### State Management & Data
+- **Zustand** - Lightweight state management with persistence
+- **React Query** - Server state management and caching
+- **Zod** - Runtime type validation and schema validation
 
-- **Framework**: Next.js 15 with App Router
-- **Blockchain**: Base (via OnchainKit & MiniKit)
-- **Styling**: Tailwind CSS with custom design system
-- **AI**: OpenAI API (via OpenRouter)
-- **Recording**: Web MediaRecorder API
-- **Storage**: Local storage with IPFS integration (Pinata)
+### Integrations
+- **OnchainKit** - Base blockchain integration
+- **OpenAI/OpenRouter** - AI content generation
+- **React i18next** - Internationalization framework
+- **React Hot Toast** - Toast notifications
 
-## Getting Started
+### Development Tools
+- **ESLint** - Code linting and formatting
+- **Prettier** - Code formatting
+- **Husky** - Git hooks for quality assurance
 
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+## 🚀 Getting Started
 
-2. **Set up environment variables**:
-   Copy `.env.local` and add your API keys:
-   ```bash
-   NEXT_PUBLIC_ONCHAINKIT_API_KEY=your_onchainkit_key
-   NEXT_PUBLIC_OPENAI_API_KEY=your_openai_key
-   ```
+### Prerequisites
 
-3. **Run the development server**:
-   ```bash
-   npm run dev
-   ```
+- **Node.js 18+** and npm/yarn
+- **OpenAI or OpenRouter API key** for AI features
+- **OnchainKit API key** for Base integration (optional)
 
-4. **Open your browser**:
-   Navigate to [http://localhost:3000](http://localhost:3000)
+### Installation
 
-## Core Components
+1. **Clone the repository:**
+```bash
+git clone <repository-url>
+cd rightscard-base-miniapp
+```
 
-### AppShell
-Main layout component with navigation and floating background elements.
+2. **Install dependencies:**
+```bash
+npm install
+# or
+yarn install
+```
 
-### RightsCard
-Interactive component displaying legal rights with tabbed interface for do's/don'ts and legal rights.
+3. **Set up environment variables:**
+```bash
+cp .env.example .env.local
+```
 
-### RecordButton
-Recording interface supporting both audio and video capture with real-time duration tracking.
+Edit `.env.local` with your API keys:
+```env
+# Required for AI features
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+# OR
+OPENAI_API_KEY=your_openai_api_key_here
 
-### Modal
-Reusable modal component for displaying rights cards and AI-generated summaries.
+# Optional for Base integration
+NEXT_PUBLIC_ONCHAINKIT_API_KEY=your_onchainkit_api_key_here
 
-## API Integration
+# Optional for enhanced features
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+PINATA_API_KEY=your_pinata_api_key_here
+PINATA_SECRET_API_KEY=your_pinata_secret_key_here
+```
 
-### OpenAI (via OpenRouter)
-- Generates AI summaries of interactions
-- Creates shareable social media content
-- Uses `google/gemini-2.0-flash-001` model
+4. **Run the development server:**
+```bash
+npm run dev
+# or
+yarn dev
+```
 
-### OnchainKit & MiniKit
-- Base blockchain integration
-- Wallet connectivity
-- Frame-ready for Farcaster
+5. **Open your browser:**
+Navigate to [http://localhost:3000](http://localhost:3000)
 
-### Future Integrations
-- **Supabase**: Backend as a Service for user data
-- **Pinata**: IPFS storage for recordings
-- **Neynar**: Farcaster social features
+## 📁 Project Structure
 
-## Design System
+```
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   │   ├── generate-card/ # AI card generation
+│   │   ├── generate-summary/ # AI summary generation
+│   │   ├── health/        # Health check endpoint
+│   │   └── rights/        # Rights data API
+│   ├── globals.css        # Global styles and design tokens
+│   ├── layout.tsx         # Root layout with providers
+│   ├── page.tsx           # Main application page
+│   └── providers.tsx      # React Query and other providers
+├── components/            # Reusable React components
+│   ├── AppShell.tsx       # Main app layout and navigation
+│   ├── Button.tsx         # Customizable button component
+│   ├── Icon.tsx           # Icon component with variants
+│   ├── Modal.tsx          # Modal dialog component
+│   ├── RecordButton.tsx   # Audio/video recording functionality
+│   ├── RecordingViewer.tsx # Media playback and management
+│   ├── RightsCard.tsx     # Interactive rights display
+│   └── Settings.tsx       # App settings and preferences
+├── lib/                   # Utility libraries and configurations
+│   ├── ai.ts             # AI integration (OpenAI/OpenRouter)
+│   ├── constants.ts      # App constants and rights data
+│   ├── i18n.ts           # Internationalization setup
+│   ├── store.ts          # Zustand state management
+│   ├── types.ts          # TypeScript type definitions
+│   ├── utils.ts          # Utility functions
+│   └── validation.ts     # Zod schemas and validation
+├── public/               # Static assets
+│   └── favicon.ico       # App favicon
+├── tailwind.config.ts    # Tailwind CSS configuration
+└── tsconfig.json         # TypeScript configuration
+```
 
-### Colors
-- Primary: `hsl(217.9, 82.9%, 36.5%)`
-- Accent: `hsl(217.9, 82.9%, 56.5%)`
-- Success: `hsl(158.4, 44.7%, 43.7%)`
-- Error: `hsl(0, 72.3%, 50%)`
+## 🔌 API Endpoints
+
+### Public Endpoints
+- `GET /api/health` - Application health check and status
+- `GET /api/rights` - Fetch state-specific rights information
+- `POST /api/rights` - Generate custom rights cards
+
+### AI Endpoints
+- `POST /api/generate-summary` - Generate AI-powered interaction summaries
+- `POST /api/generate-card` - Create shareable rights cards
+
+### Example API Usage
+
+```javascript
+// Fetch rights for a specific state
+const response = await fetch('/api/rights?state=CA&interactionType=traffic_stop&language=en');
+const { card } = await response.json();
+
+// Generate AI summary
+const summary = await fetch('/api/generate-summary', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    interactionType: 'traffic_stop',
+    duration: 300,
+    location: 'Los Angeles, CA'
+  })
+});
+```
+
+## 🌍 Internationalization
+
+The app supports multiple languages with full translation coverage:
+
+- **English (en)** - Default language
+- **Spanish (es)** - Complete translation
+
+### Adding New Languages
+
+1. Add translations to `lib/i18n.ts`
+2. Update language constants in `lib/constants.ts`
+3. Add language option to Settings component
+
+## 🎨 Design System
+
+### Color Palette
+- **Primary**: Blue gradient (`from-blue-500 to-purple-600`)
+- **Secondary**: White with opacity for glass effect
+- **Success**: Green (`#10b981`)
+- **Error**: Red (`#ef4444`)
+- **Background**: Dark gradient with glass morphism
+
+### Typography
+- **Display**: Large headings with gradient text
+- **Heading**: Section titles and important text
+- **Body**: Regular content text
+- **Caption**: Small descriptive text
 
 ### Components
-- Glass morphism cards with backdrop blur
-- Gradient buttons with hover effects
-- Mobile-first responsive design
-- Smooth animations and transitions
+All components follow the design system with consistent:
+- Border radius (4px, 8px, 12px)
+- Spacing scale (4px increments)
+- Shadow system for depth
+- Animation timing and easing
 
-## Legal Disclaimer
+## 🚀 Deployment
 
-RightsCard provides general legal information and should not replace professional legal advice. Always consult with a qualified attorney for specific legal matters.
+### Vercel (Recommended)
 
-## License
+1. **Push to GitHub:**
+```bash
+git push origin main
+```
 
-This project is licensed under the MIT License.
+2. **Deploy to Vercel:**
+   - Connect your GitHub repository to Vercel
+   - Add environment variables in Vercel dashboard
+   - Deploy automatically on push
+
+3. **Configure Environment Variables:**
+   - Add all required API keys in Vercel dashboard
+   - Ensure `NEXT_PUBLIC_` variables are properly set
+
+### Alternative Platforms
+
+The app can be deployed to any platform supporting Next.js:
+- **Netlify** - Static site generation
+- **Railway** - Full-stack deployment
+- **DigitalOcean App Platform** - Container deployment
+- **AWS Amplify** - Serverless deployment
+
+### Build Commands
+```bash
+# Production build
+npm run build
+
+# Start production server
+npm start
+
+# Lint code
+npm run lint
+```
+
+## 🧪 Testing
+
+### Manual Testing Checklist
+- [ ] Rights cards display correctly for different states
+- [ ] Audio/video recording works on mobile devices
+- [ ] AI summaries generate successfully
+- [ ] Language switching works properly
+- [ ] Settings persist across sessions
+- [ ] Sharing functionality works
+- [ ] Responsive design on various screen sizes
+
+### Browser Compatibility
+- ✅ Chrome 90+
+- ✅ Firefox 88+
+- ✅ Safari 14+
+- ✅ Edge 90+
+- ✅ Mobile browsers (iOS Safari, Chrome Mobile)
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. **Fork the repository**
+2. **Create a feature branch:**
+```bash
+git checkout -b feature/amazing-feature
+```
+
+3. **Make your changes and commit:**
+```bash
+git commit -m 'Add amazing feature'
+```
+
+4. **Push to your branch:**
+```bash
+git push origin feature/amazing-feature
+```
+
+5. **Open a Pull Request**
+
+### Development Guidelines
+- Follow TypeScript best practices
+- Use the existing component patterns
+- Add proper error handling
+- Include JSDoc comments for complex functions
+- Test on mobile devices
+- Follow the established design system
+
+## 📄 Legal Disclaimer
+
+**Important**: RightsCard provides general legal information and should not replace professional legal advice. The information provided is for educational purposes only and may not reflect the most current legal developments. Always consult with a qualified attorney for specific legal matters and jurisdiction-specific advice.
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Base** - For providing the blockchain infrastructure
+- **OpenAI/OpenRouter** - For AI capabilities
+- **Coinbase OnchainKit** - For seamless Base integration
+- **Legal Rights Organizations** - For guidance on rights information
+- **Open Source Community** - For the amazing tools and libraries
+
+---
+
+**Built with ❤️ for civil rights and digital empowerment**

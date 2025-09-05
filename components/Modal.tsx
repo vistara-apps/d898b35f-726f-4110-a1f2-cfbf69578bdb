@@ -9,9 +9,10 @@ interface ModalProps {
   title?: string;
   children: ReactNode;
   variant?: 'default';
+  className?: string;
 }
 
-export function Modal({ isOpen, onClose, title, children, variant = 'default' }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, variant = 'default', className }: ModalProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -51,7 +52,7 @@ export function Modal({ isOpen, onClose, title, children, variant = 'default' }:
       />
       
       {/* Modal */}
-      <div className="relative glass-card p-6 w-full max-w-md mx-auto shadow-modal">
+      <div className={`relative glass-card p-6 w-full mx-auto shadow-modal ${className || 'max-w-md'}`}>
         {/* Header */}
         {title && (
           <div className="flex items-center justify-between mb-4">
