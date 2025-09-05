@@ -10,7 +10,7 @@
     "subtitle": "Built with Zara",
     "description": "RightsCard is a Base Mini App built with Zara.",
     "iconUrl": "https://0co.to/images/zara-2.png",
-    "homeUrl": "https://d898b35f726f4110a1f2cfbf69578bdb-6vt5.vercel.app",
+    "homeUrl": "https://d898b35f726f4110a1f2cfbf69578bdb-9dny.vercel.app",
     "splashImageUrl": "https://d898b35f726f4110a1f2cfbf69578bdb-6vt5.vercel.app/splash.png",
     "splashBackgroundColor": "#000000",
     "heroImageUrl": "https://d898b35f726f4110a1f2cfbf69578bdb-6vt5.vercel.app/image.png",
@@ -25,6 +25,6 @@
       "miniapp",
       "onchainkit"
     ],
-    "webhookUrl": "https://d898b35f726f4110a1f2cfbf69578bdb-6vt5.vercel.app/api/webhook"
+    "webhookUrl": "https://d898b35f726f4110a1f2cfbf69578bdb-9dny.vercel.app/api/webhook"
   }
 }
