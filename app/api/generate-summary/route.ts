@@ -1,14 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-  dangerouslyAllowBrowser: true,
-});
+// Initialize OpenAI client only if API key is available
+let openai: OpenAI | null = null;
+
+if (process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({
+    apiKey: process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY,
+    baseURL: process.env.OPENROUTER_API_KEY ? "https://openrouter.ai/api/v1" : undefined,
+    dangerouslyAllowBrowser: true,
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
+    if (!openai) {
+      return NextResponse.json(
+        { error: 'AI service not configured. Please set OPENAI_API_KEY or OPENROUTER_API_KEY environment variable.' },
+        { status: 503 }
+      );
+    }
+
     const { interactionType, duration, location } = await request.json();
 
     const prompt = `Generate a concise summary for a legal rights interaction recording with the following details:

@@ -72,7 +72,7 @@ export function RightsCard({ card, variant = 'interactive', onShare }: RightsCar
             <div>
               <h4 className="flex items-center space-x-2 text-red-300 font-medium mb-2">
                 <X className="w-4 h-4" />
-                <span>Don't</span>
+                <span>Don&apos;t</span>
               </h4>
               <ul className="space-y-2">
                 {card.content.donts.map((item, index) => (
@@ -114,7 +114,7 @@ export function RightsCard({ card, variant = 'interactive', onShare }: RightsCar
                 key={index}
                 className="text-xs bg-white bg-opacity-10 text-white px-2 py-1 rounded-full"
               >
-                "{phrase}"
+                &ldquo;{phrase}&rdquo;
               </span>
             ))}
           </div>
